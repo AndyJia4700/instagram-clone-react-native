@@ -76,7 +76,7 @@ class PostScreen extends React.Component{
   }
 
   uploadPost(){
-    alert('upload')
+    // alert('upload')
     this.props.navigation.navigate('PostCheckout')
   }
 
@@ -119,28 +119,29 @@ class PostScreen extends React.Component{
                 </View>
             }
         </View>
+        
         <View style={styles.postContainer}>
-            {
-                this.props.post?.photos.map(url => 
-                <TouchableOpacity 
-                    onPress={()=>this.changeChosenUrl(url)}
-                >
-                    <Image source={{uri: url}} style={styles.preview}/>
-                </TouchableOpacity>
-                )
-            }
+          {
+            this.props.post?.photos.map(url => 
+            <TouchableOpacity 
+              onPress={()=>this.changeChosenUrl(url)}
+            >
+              <Image source={{uri: url}} style={styles.preview}/>
+            </TouchableOpacity>
+            )
+          }
 
-            {
-                !this.props.post.photos || this.props.post.photos?.length == 4 || this.props.post.photos?.length == 0 ? null :
-                <TouchableOpacity 
-                    style={styles.postSquare} 
-                    onPress={this.openLibrary}
-                >
-                    <View style={styles.postCircle}>
-                        <Text style={styles.postPlus}>+</Text>
-                    </View>
-                </TouchableOpacity>
-            }
+          {
+            !this.props.post.photos || this.props.post.photos?.length == 4 || this.props.post.photos?.length == 0 ? null :
+            <TouchableOpacity 
+              style={styles.postSquare} 
+              onPress={this.openLibrary}
+            >
+              <View style={styles.postCircle}>
+                <Text style={styles.postPlus}>+</Text>
+              </View>
+            </TouchableOpacity>
+          }
         </View>
       </SafeAreaView>
     );

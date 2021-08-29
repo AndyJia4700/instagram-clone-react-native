@@ -1,19 +1,22 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, TouchableOpacity, TextInput, Dimensions } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, Image, Button, TouchableOpacity, TextInput, Dimensions } from 'react-native';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-
+import {updateDescription} from '../../../actions/post'
 
 const mSTP = state => {
   return{
     user: state.user,
+    post: state.post
   }
 }
 
 const mDTP = dispatch => {
-  return bindActionCreators({}, dispatch)
+  return bindActionCreators({updateDescription}, dispatch)
 }
 
+const screeHeight = Dimensions.get('window').height
+const screeWidth = Dimensions.get('window').width
 class PostCheckout extends React.Component{
   constructor(props){
     super(props);
@@ -22,7 +25,30 @@ class PostCheckout extends React.Component{
   render(){
     return (
       <View style={styles.container}>
-          <Text>This is the PostCheckout</Text>
+        <TextInput
+          multiline = {true}
+          numberOfLines = {4}
+          style={styles.post}
+          placeholder={'What is in your mind?'}
+          onChangeText={(input) => this.props.updateDescription(input)}
+          value={this.props.post.description}
+        /> 
+        <View>
+          <ScrollView
+            horizontal={true}
+            pagingEnabled={true}
+          >
+            {
+              this.props.post.photos?.map(url => 
+                <Image 
+                  source={{uri: url}}
+                  style={styles.imagePreview}
+                />
+              )
+            }
+
+          </ScrollView>
+        </View>
       </View>
     );
   }
@@ -32,10 +58,20 @@ class PostCheckout extends React.Component{
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'pink',
-    alignItems: 'center',
-    justifyContent: 'center',
+    // alignItems: 'center',
+    // justifyContent: 'center',
   },
+  post:{
+    fontSize: 20,
+    marginTop: 40,
+    padding: 20,
+    marginHorizontal: 10
+  },
+  imagePreview:{
+    height: 360,
+    width: screeWidth,
+    backgroundColor: 'rgba(0,0,0,0.1)'
+  }
   
 });
 

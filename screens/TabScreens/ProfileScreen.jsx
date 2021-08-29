@@ -24,6 +24,13 @@ class ProfileScreen extends React.Component{
     return (
       <View style={styles.container}>
           <Text>This is the ProfileScreen</Text>
+
+          <TouchableOpacity onPress={()=> this.props.navigation.navigate('ProfilePicture')}>
+            <Text>ProfilePicture</Text>
+          </TouchableOpacity>
+
+          <Text>xxxxxxxxxx</Text>
+
           <TouchableOpacity onPress={() => firebase.auth().signOut()}>
             <Text>logout</Text>
           </TouchableOpacity>

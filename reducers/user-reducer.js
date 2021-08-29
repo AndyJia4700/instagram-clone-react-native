@@ -9,6 +9,8 @@ const userReducer = (state = {}, action) => {
             return {...state, password: action.payload}
         case "UPDATE_USERNAME":
             return {...state, username: action.payload.toLowerCase()}
+        case "UPDATE_PHOTO":
+            return {...state, photo: action.payload.toLowerCase()}
         // case RECEIVE_CURRENT_USER:
         //     return merge({}, state, {[action.user.id]: action.user});
         // case RECEIVE_USER:

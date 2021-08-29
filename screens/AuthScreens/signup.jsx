@@ -27,7 +27,6 @@ class Signup extends React.Component{
   }
 
   onSignupPress(){
-  
     if (this.props.user.password == this.state.repeat && this.props.username !== ""){
       this.props.signup()
     } else {
@@ -39,6 +38,13 @@ class Signup extends React.Component{
   render(){
     return (
       <View style={styles.container}>
+        <TouchableOpacity
+          onPress={()=> this.props.navigation.navigate('ProfilePicture')}
+        >
+          <Text>
+           photo upload
+          </Text>
+        </TouchableOpacity>
 
         <View style={styles.innerContainer}>
           <View style={styles.subtitle}>

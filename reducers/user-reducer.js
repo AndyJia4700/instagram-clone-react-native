@@ -1,3 +1,4 @@
+// const profile = (state={})
 const userReducer = (state = {}, action) => {
     Object.freeze(state);
     switch(action.type){

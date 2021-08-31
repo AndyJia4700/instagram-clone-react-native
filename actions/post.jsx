@@ -63,7 +63,8 @@ export const uploadPost = () => {
                 date: new Date().getTime(),
                 likes: [],
                 comments: [],
-                description: post.description
+                description: post.description,
+                savedBy: [],
             }
 
             await db.collection('posts').doc(id).set(upload)
@@ -113,6 +114,80 @@ export const unlikePost = post => {
             })
         }catch(e){
             alert("unlikepost action:"+ post+ e)
+        }
+    }
+}
+
+
+export const savePost = post => {
+    return async (disapatch, getState) => {
+        try{
+            const { uid } = getState().user
+            await db.collection('posts').doc(post.id).update({
+                savedBy: firebase.firestore.FieldValue.arrayUnion(uid)
+            })
+
+            await db.collection('users').doc(uid).update({
+                savedPosts: firebase.firestore.FieldValue.arrayUnion(post.id)
+            })
+        }catch(e){
+            alert("savepost action:" + post + e)
+        }
+    }
+}
+
+export const unsavePost = post => {
+    return async (disapatch, getState) => {
+        try{
+            const { uid } = getState().user
+            await db.collection('posts').doc(post.id).update({
+                savedBy: firebase.firestore.FieldValue.arrayRemove(uid)
+            })
+            
+            await db.collection('users').doc(uid).update({
+                savedPosts: firebase.firestore.FieldValue.arrayRemove(post.id)
+            })
+        }catch(e){
+            alert("unsavepost action:"+ post+ e)
+        }
+    }
+}
+
+export const getSavedPosts = () => {
+    return async (dispatch, getState) => {
+        // try{
+        //     const { savedPosts } = getState().user
+        //     let posts = savedPosts
+            
+        //     posts.map((savedPostId) =>
+        //         db.collection('posts').where('id', '==', savedPostId).get()
+        //     )
+
+        //     let listedPosts = []
+        //     posts.forEach(post => {
+        //         listedPosts.push(post.data())
+        //     })
+
+        //     dispatch({
+        //         type: 'GET_SAVED_POSTS',
+        //         payload: listedPosts
+        //     })
+        // }catch(e){
+        //     alert(e)
+        // }
+        try{
+            const { uid } = getState().user
+            const posts = await db.collection('posts').orderBy('date', 'desc').where('savedBy', 'array-contains', uid).get()
+            let listedPosts = []
+            posts.forEach(post => {
+                listedPosts.push(post.data())
+            })
+            dispatch({
+                type: 'GET_SAVED_POSTS',
+                payload: listedPosts
+            })
+        }catch(e){
+            alert(e)
         }
     }
 }

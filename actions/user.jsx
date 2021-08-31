@@ -43,7 +43,10 @@ export const signup = () => {
                     posts: [],
                     bio: '',
                     likes: 0,
-                    photo: photo
+                    photo: photo,
+                    savedPosts: [],
+                    followers: [],
+                    following: []
                 }
                 await db.collection('users').doc(response.user.uid).set(user)
                 dispatch({type: 'LOGIN', payload:user})
@@ -67,7 +70,7 @@ export const login = () => {
     }
 }
 
-export const getUser = (uid) => {
+export const getUser = (uid, type) => {
     return async (dispatch) =>{
         try {
             const userQuery = await db.collection('users').doc(uid).get()
@@ -78,12 +81,56 @@ export const getUser = (uid) => {
                 posts.push(response.data())
             })
             user.posts = orderBy(posts, 'data', 'desc')
-            dispatch({
-                type: 'LOGIN', 
-                payload: user
-            })
+            if (type == 'PROFILE'){
+                dispatch({
+                    type: 'GET_PROFILE', 
+                    payload: user
+                })
+            }else{
+                dispatch({
+                    type: 'LOGIN', 
+                    payload: user
+                })
+            }
         }catch(e){
             alert(e)
         }
+    }
+}
+
+export const followUser = (userToFollow) =>{
+    return async (dispatch, getState) =>{
+        try{
+            const { uid } = getState().user
+        
+            await db.collection('users').doc(uid).update({
+                following: firebase.firestore.FieldValue.arrayUnion(userToFollow)
+            })
+
+            await db.collection('users').doc(userToFollow).update({
+                followers: firebase.firestore.FieldValue.arrayUnion(uid)
+            })
+
+            dispatch(getUser(userToFollow, 'PROFILE'))
+            
+        }catch(e){
+            alert("Action followUser" +e)
+        }
+  
+    }
+}
+
+export const unfollowUser = (userToUnfollow) =>{
+    return async (dispatch, getState) =>{
+        const { uid } = getState().user
+        await db.collection('users').doc(uid).update({
+            following: firebase.firestore.FieldValue.arrayRemove(userToUnfollow)
+        })
+
+        await db.collection('users').doc(userToUnfollow).update({
+            followers: firebase.firestore.FieldValue.arrayRemove(uid)
+        })
+
+        dispatch(getUser(userToUnfollow, 'PROFILE'))         
     }
 }

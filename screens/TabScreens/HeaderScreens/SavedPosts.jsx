@@ -2,10 +2,9 @@ import React from 'react';
 import { RefreshControl, FlatList, StyleSheet, Text, View, Button, TouchableOpacity, TextInput, Dimensions, Image, SafeAreaView, Platform } from 'react-native';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { getUser } from '../../actions/user';
-import { getPosts, likePost, unlikePost, savePost, unsavePost } from '../../actions/post';
-import PostComponent from '../../components/postComponent';
-import { AntDesign } from '@expo/vector-icons';
+import { getUser } from '../../../actions/user';
+import { getPosts, likePost, unlikePost, savePost, unsavePost, getSavedPosts } from '../../../actions/post';
+import PostComponent from '../../../components/postComponent';
 
 
 
@@ -24,6 +23,7 @@ const mDTP = dispatch => {
     unlikePost,
     savePost, 
     unsavePost,
+    getSavedPosts,
   }, dispatch)
 }
 
@@ -31,31 +31,21 @@ const mDTP = dispatch => {
 const screenHeight = Dimensions.get('window').height
 const screenWidth = Dimensions.get('window').width
 
-class HomeScreen extends React.Component{
+class SavedPosts extends React.Component{
   constructor(props){
     super(props);
   }
 
   componentDidMount(){
-    this.props.getPosts(10)
+    this.props.getSavedPosts()
   }
 
   render(){
     return (
       <SafeAreaView style={(Platform.OS =='ios' ? styles.iosContainer: styles.androidContainer)}>
-        <View style={styles.headerContainer}>
-          <Text style={styles.logo}>INSTA-CLONE</Text>
-          <View style={styles.headerIconsContainer}>
-            <TouchableOpacity
-              onPress={() => this.props.navigation.navigate('SavedPosts')}
-            >
-              <AntDesign name="hearto" size={24} color="black" style={styles.icons}/>
-            </TouchableOpacity>
-            <AntDesign name="message1" size={24} color="black" style={styles.icons}/>
-          </View>
-        </View>
+       
         <FlatList
-          data={this.props.post.feed}
+          data={this.props.post.savedFeed}
           keyExtractor={item => JSON.stringify(item.uid)}
           renderItem={({item}) =>(
             <PostComponent 
@@ -65,7 +55,6 @@ class HomeScreen extends React.Component{
               unlikePost={(item)=> this.props.unlikePost(item)}
               savePost={(item)=> this.props.savePost(item)}
               unsavePost={(item)=> this.props.unsavePost(item)}
-              navigation={this.props.navigation}
             />
         )}
 
@@ -120,4 +109,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default connect(mSTP, mDTP)(HomeScreen)
+export default connect(mSTP, mDTP)(SavedPosts)

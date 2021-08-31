@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 import { View, Text, Image, Dimensions, StyleSheet, ScrollView, TouchableOpacity } from 'react-native'
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { AntDesign, Feather, SimpleLineIcons } from '@expo/vector-icons';
+import { AntDesign, Feather, SimpleLineIcons, Ionicons } from '@expo/vector-icons';
 import { TextInput } from 'react-native-gesture-handler';
 
 const screeHeight = Dimensions.get('window').height
@@ -15,12 +15,37 @@ export default class PostComponent extends Component {
         this.state={
             liked: undefined,
             likedNum: 0,
+            saved: undefined,
         }
         this.switchlikePost = this.switchlikePost.bind(this)
+        this.switchSavedPost = this.switchSavedPost.bind(this)
     }
 
-    static propTypes = {
-        prop: PropTypes
+    // static propTypes = {
+    //     prop: PropTypes
+    // }
+
+    switchSavedPost(){
+        const savedPost = this.props.item.savedBy.includes(this.props.user.uid)
+        if (savedPost || this.state.saved == true){
+            if (this.state.liked == false){
+                this.setState({
+                    saved: true,
+                })
+                this.props.savePost(this.props.item)
+            } else {
+                this.setState({
+                    saved: false,
+                })
+                this.props.unsavePost(this.props.item)
+            }
+        } else {
+            this.setState({
+                saved: true,
+            })
+            this.props.savePost(this.props.item)
+        }
+
     }
 
     switchlikePost(){
@@ -54,7 +79,12 @@ export default class PostComponent extends Component {
             <View style={styles.container}>
                 <View style={styles.userContainer}>
                     <View style={styles.userPhotoName}>
-                        <Image source={{uri: this.props.item.photo}} style={styles.userPhoto}/>
+                        <TouchableOpacity
+                            onPress={()=>this.props.navigation.navigate('ProfileScreen', this.props.item.uid)}
+                        >
+
+                            <Image source={{uri: this.props.item.photo}} style={styles.userPhoto}/>
+                        </TouchableOpacity>
                         <Text style={styles.userName}>{this.props.item.username}</Text>
                     </View>
                     <Text style={styles.postTime}>{moment(this.props.item.date).format('YYYY-MM-DD')}</Text>
@@ -99,7 +129,22 @@ export default class PostComponent extends Component {
                     </View>
 
                     <View style={styles.likeCommentIcons}>
-                        <Feather name="bookmark" size={24} color="black" style={styles.icons}/>
+                        <TouchableOpacity
+                            onPress={()=>this.switchSavedPost()}
+                        >
+                            {
+                                this.props.item.savedBy.includes(this.props.user.uid) && this.state.saved == undefined ?   
+                                <Ionicons name="md-bookmark" size={24} color="tomato" style={styles.icons}/>
+                                : 
+                                (
+                                    this.state.saved == true ? 
+                                    <Ionicons name="md-bookmark" size={24} color="tomato" style={styles.icons}/>
+                                    :
+                                    <Feather name="bookmark" size={24} color="black" style={styles.icons}/>
+                                )
+                            }
+                        </TouchableOpacity>
+                        
                     </View>
                 </View>
 

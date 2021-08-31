@@ -22,9 +22,10 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { View, Text, Button, TouchableOpacity, StyleSheet } from 'react-native';
 import { FontAwesome  } from '@expo/vector-icons';
-import { uploadPost, 
-  // getPosts 
-} from '../actions/post';
+import { uploadPost, } from '../actions/post';
+import SavedPosts from '../screens/TabScreens/HeaderScreens/SavedPosts';
+import ProfileScreen from '../screens/TabScreens/ProfileScreen';
+
 
 const mSTP = state => {
   return{
@@ -58,6 +59,16 @@ class MyStack extends React.Component{
     return (
       <Stack.Navigator>
         <Stack.Screen name="TabNavigator" component={TabNavigator} options={{headerShown: false}}/>
+        <Stack.Screen name="SavedPosts" component={SavedPosts} options={{headerShown: true}}/>
+        <Stack.Screen 
+          name="ProfileScreen" 
+          component={ProfileScreen} 
+          options={{
+            headerShown: true,
+            shadowColor: 'transparent',
+            elevation: 0 
+          }}
+        />
         <Stack.Screen 
           name="PostCheckout" 
           component={PostCheckout} 

@@ -20,6 +20,7 @@ const screeWidth = Dimensions.get('window').width
 class PostCheckout extends React.Component{
   constructor(props){
     super(props);
+ 
   }
 
   render(){
@@ -35,6 +36,7 @@ class PostCheckout extends React.Component{
         /> 
         <View>
           <ScrollView
+         
             horizontal={true}
             pagingEnabled={true}
           >

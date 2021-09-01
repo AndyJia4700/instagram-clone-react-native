@@ -7,6 +7,8 @@ const postReducer = (state = {photos: []}, action) => {
             return {...state, description: action.payload}
         case "GET_POSTS":
             return {...state, feed: action.payload}
+        case "GET_POST":
+            return {...state, onePost: action.payload}
         case "GET_SAVED_POSTS":
             return {...state, savedFeed: action.payload}
         default:

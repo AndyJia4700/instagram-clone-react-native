@@ -80,7 +80,7 @@ export const getUser = (uid, type) => {
             postsQuery.forEach(function(response){
                 posts.push(response.data())
             })
-            user.posts = orderBy(posts, 'data', 'desc')
+            user.posts = orderBy(posts, 'date', 'desc')
             if (type == 'PROFILE'){
                 dispatch({
                     type: 'GET_PROFILE', 

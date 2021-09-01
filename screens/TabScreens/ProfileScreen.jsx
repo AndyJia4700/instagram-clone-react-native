@@ -3,8 +3,10 @@ import { StyleSheet, Text, View, Button, TouchableOpacity, TextInput, Dimensions
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { getUser, followUser, unfollowUser } from '../../actions/user';
+import { getPost } from '../../actions/post';
 import * as firebase from 'firebase';
 import { AntDesign } from '@expo/vector-icons';
+import { FlatList, ScrollView } from 'react-native-gesture-handler';
 
 const mSTP = state => {
   return{
@@ -14,10 +16,11 @@ const mSTP = state => {
 }
 
 const mDTP = dispatch => {
-  return bindActionCreators({getUser, followUser, unfollowUser}, dispatch)
+  return bindActionCreators({getUser, followUser, unfollowUser, getPost}, dispatch)
 }
 
 const screenWidth = Dimensions.get('window').width
+const screenHeight = Dimensions.get('window').height
 
 
 class ProfileScreen extends React.Component{
@@ -25,6 +28,7 @@ class ProfileScreen extends React.Component{
     super(props);
     this.follow = this.follow.bind(this)
     this.unfollow = this.unfollow.bind(this)
+    this.goToPost = this.goToPost.bind(this)
   }
 
   componentDidMount(){
@@ -33,35 +37,38 @@ class ProfileScreen extends React.Component{
       this.props.getUser(params, 'PROFILE')
     }
     this.props.navigation.setOptions({
-      title: this.props.profile.username,
-  
+      title: this.props.profile?.username,
+      headerHideShadow: true,
+      // //   headerStyle:{
+      // //     shadowColor: 'transparent',
+      // //     elevation: 0 
+      // //   }
     })
   }
 
   follow(){
-    this.props.followUser(this.props.profile.uid)
+    this.props.followUser(this.props.profile?.uid)
   }
 
   unfollow(){
-    this.props.unfollowUser(this.props.profile.uid)
+    this.props.unfollowUser(this.props.profile?.uid)
+  }
+
+  goToPost(post){
+    this.props.getPost(post)
+    this.props.navigation.navigate('OnePost')
   }
 
   render(){
     const {params} = this.props.route
-    // this.props.navigation.setOptions({
-    //   title: this.props.profile.username,
-    // //   headerHideShadow: true,
-    // //   headerStyle:{
-    // //     shadowColor: 'transparent',
-    // //     elevation: 0 
-    // //   }
-    // })
     if (!params){
       return (
         <View style={styles.container}>
             <Text>This is the ProfileScreen</Text>
 
-            <TouchableOpacity onPress={()=> this.props.navigation.navigate('ProfilePicture')}>
+            <TouchableOpacity 
+              onPress={()=> this.props.navigation.navigate('ProfilePicture')
+            }>
               <Text>ProfilePicture</Text>
             </TouchableOpacity>
 
@@ -76,31 +83,31 @@ class ProfileScreen extends React.Component{
       return (
         <View style={styles.container}>
           <View style={styles.profileContainer}>
-            <Image source = {{uri: this.props.profile.photo}} style={styles.image}/>
+            <Image source = {{uri: this.props.profile?.photo}} style={styles.image}/>
 
             <View style={styles.detailsContainer}>
               <View style={styles.details}>
-                <Text>{this.props.profile.posts?.length}</Text>
+                <Text>{this.props.profile?.posts?.length}</Text>
                 <Text>Posts</Text>
               </View>
               <View style={styles.details}>
-                <Text>{this.props.profile.followers?.length}</Text>
+                <Text>{this.props.profile?.followers?.length}</Text>
                 <Text>Followers</Text>
               </View>
               <View style={styles.details}>
-                <Text>{this.props.profile.following?.length}</Text>
+                <Text>{this.props.profile?.following?.length}</Text>
                 <Text>Following</Text>
               </View>
             </View>  
           </View>
 
           <View style={{padding: 20, width: '100%'}}>
-            <Text>{this.props.profile.email}</Text>
-            <Text>{this.props.profile.bio}</Text>
+            <Text>{this.props.profile?.email}</Text>
+            <Text>{this.props.profile?.bio}</Text>
           </View>
 
           {
-            (this.props.profile.followers?.includes(this.props.user.uid)) 
+            (this.props.profile?.followers?.includes(this.props.user.uid)) 
             ? 
             <View style={styles.menuContainer}>
               <TouchableOpacity 
@@ -122,11 +129,35 @@ class ProfileScreen extends React.Component{
                 style={styles.followerButton}
                 onPress={() => this.follow()}
               >
-                <Text style={{color: 'white', fontWeight: 'bold', fontSize: '15'}}>Follow</Text>
+                <Text style={styles.followerButtonTitle}>Follow</Text>
               </TouchableOpacity>
             </View>
 
           }
+
+          <FlatList
+            numColumns={3}
+            data={this.props.profile?.posts}
+            keyExtractor={(item) => JSON.stringify(item.date)}
+            style={{
+              flex: 1,
+              
+            }}
+            renderItem={({ item })=>
+              <TouchableOpacity
+                onPress={()=>this.goToPost(item)}
+              >  
+                <Image 
+                  source={{uri: item.photos[0]}}
+                  style={{
+                    width: screenWidth/3, 
+                    height: screenWidth/3,
+                  }}
+                />
+              </TouchableOpacity>
+            }
+          />
+          
         </View>
       );
     }
@@ -137,6 +168,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
+    justifyContent: 'center'
   },
   details:{
     alignItems: 'center',
@@ -152,6 +184,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10
+  },
+  followerButtonTitle:{
+    color: 'white', 
+    fontWeight: 'bold', 
+    fontSize: 20
   },
   image:{
     width: 100,

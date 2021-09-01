@@ -24,7 +24,9 @@ import { View, Text, Button, TouchableOpacity, StyleSheet } from 'react-native';
 import { FontAwesome  } from '@expo/vector-icons';
 import { uploadPost, } from '../actions/post';
 import SavedPosts from '../screens/TabScreens/HeaderScreens/SavedPosts';
+import OnePost from '../screens/TabScreens/OnePost';
 import ProfileScreen from '../screens/TabScreens/ProfileScreen';
+import MessageScreen from '../screens/TabScreens/HeaderScreens/MessageScreen';
 
 
 const mSTP = state => {
@@ -60,6 +62,8 @@ class MyStack extends React.Component{
       <Stack.Navigator>
         <Stack.Screen name="TabNavigator" component={TabNavigator} options={{headerShown: false}}/>
         <Stack.Screen name="SavedPosts" component={SavedPosts} options={{headerShown: true}}/>
+        <Stack.Screen name="OnePost" component={OnePost} options={{headerShown: true}}/>
+        <Stack.Screen name="MessageScreen" component={MessageScreen} options={{headerShown: true}}/>
         <Stack.Screen 
           name="ProfileScreen" 
           component={ProfileScreen} 

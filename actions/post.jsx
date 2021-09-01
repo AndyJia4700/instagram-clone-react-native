@@ -92,6 +92,19 @@ export const getPosts = (numberOfPosts) => {
     }
 }
 
+export const getPost = (post) => {
+    return async (dispatch, getState) => {
+        try{
+            dispatch({
+                type: 'GET_POST',
+                payload: post
+            })
+        }catch(e){
+            alert(e)
+        }
+    }
+}
+
 export const likePost = post => {
     return async (disapatch, getState) => {
         try{
@@ -191,3 +204,23 @@ export const getSavedPosts = () => {
         }
     }
 }
+
+export const addMessage = (text) => {
+    return (dispatch, getState) => {
+        const { uid, photo, username } = getState().user
+        try {
+            const message = {
+                message: text,
+                photo: photo,
+                username: username,
+                uid: uid,
+                date: new Date().getTime()
+            }
+             db.collection('messages').doc().set(message)
+        } catch (e) {
+            alert("post-action-addMessage" + e)
+        }
+    }
+}
+
+

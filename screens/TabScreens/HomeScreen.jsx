@@ -34,10 +34,19 @@ const screenWidth = Dimensions.get('window').width
 class HomeScreen extends React.Component{
   constructor(props){
     super(props);
+    this.goToMessages = this.goToMessages.bind(this);
   }
 
   componentDidMount(){
     this.props.getPosts(10)
+  }
+
+  goToMessages(){
+    try{
+      this.props.navigation.navigate('MessageScreen')
+    }catch(e){
+      alert(e)
+    }
   }
 
   render(){
@@ -51,7 +60,13 @@ class HomeScreen extends React.Component{
             >
               <AntDesign name="hearto" size={24} color="black" style={styles.icons}/>
             </TouchableOpacity>
-            <AntDesign name="message1" size={24} color="black" style={styles.icons}/>
+
+            <TouchableOpacity
+              // onPress={() => this.props.navigation.navigate('MessageScreen')}
+              onPress={() => this.goToMessages()}
+            >
+              <AntDesign name="message1" size={24} color="black" style={styles.icons}/>
+            </TouchableOpacity>
           </View>
         </View>
         <FlatList
@@ -68,7 +83,6 @@ class HomeScreen extends React.Component{
               navigation={this.props.navigation}
             />
         )}
-
         />
 
       </SafeAreaView>
